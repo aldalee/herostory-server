@@ -1,11 +1,17 @@
 package handler
 
 import (
+	"herostory-server/internal/codec"
 	"herostory-server/internal/pb"
 
 	"github.com/gorilla/websocket"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/dynamicpb"
+)
+
+const (
+	HeroAvatarDefault = "Hero_Shaman"
 )
 
 func init() {
@@ -22,4 +28,29 @@ func UserLoginCmdHandler(conn *websocket.Conn, msg *dynamicpb.Message) {
 		cmd.ProtoReflect().Set(fd, v)
 		return true
 	})
+
+	rest := &pb.UserLoginResult{
+		UserId:     1,
+		UserName:   cmd.UserName,
+		HeroAvatar: HeroAvatarDefault,
+	}
+	
+	byteArray, err := codec.EncodeMessage(rest)
+	if err != nil {
+		log.Error().Msgf(
+			"encode client %v login result failed, err: %v",
+			conn.RemoteAddr(),
+			err,
+		)
+		return
+	}
+
+	err = conn.WriteMessage(websocket.BinaryMessage, byteArray)
+	if err != nil {
+		log.Error().Msgf(
+			"write client %v login result failed, err: %v",
+			conn.RemoteAddr(),
+			err,
+		)
+	}
 }
