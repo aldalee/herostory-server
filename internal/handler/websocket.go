@@ -51,5 +51,25 @@ func WebSocketHandshake(w http.ResponseWriter, r *http.Request) {
 		}
 
 		log.Info().Msgf("decode client %v message success, code: %v, msg: %v", conn.RemoteAddr(), code, msg.Descriptor().Name())
+
+		desc := pb.File_api_proto_game_msg_proto.Messages().ByName("UserLoginCmd")
+		username := msg.Get(desc.Fields().ByName("userName"))
+		password := msg.Get(desc.Fields().ByName("password"))
+		log.Info().Msgf("client %v login with username: %v, password: %v", conn.RemoteAddr(), username, password)
+
+		rest := &pb.UserLoginResult{
+			UserId:     1,
+			UserName:   username.String(),
+			HeroAvatar: "Hero_Shaman",
+		}
+		byteArray, err := pb.EncodeMessage(rest)
+		if err != nil {
+			log.Error().Msgf("encode client %v login result failed, err: %v", conn.RemoteAddr(), err)
+			continue
+		}
+
+		if err := conn.WriteMessage(websocket.BinaryMessage, byteArray); err != nil {
+			log.Error().Msgf("write client %v login result failed, err: %v", conn.RemoteAddr(), err)
+		}
 	}
 }
