@@ -36,7 +36,7 @@ func EncodeMessage(obj protoreflect.ProtoMessage) ([]byte, error) {
 
 	// encode the length of the message
 	msgSizeByteArray := make([]byte, 2)
-	binary.LittleEndian.PutUint16(msgSizeByteArray, 0) 
+	binary.BigEndian.PutUint16(msgSizeByteArray, 0) 
 
 	// encode the code of the message
 	code, err := getMsgCodeByMsgName(string(obj.ProtoReflect().Descriptor().Name()))
@@ -44,7 +44,7 @@ func EncodeMessage(obj protoreflect.ProtoMessage) ([]byte, error) {
 		return nil, err
 	}
 	msgCodeByteArray := make([]byte, 2)
-	binary.LittleEndian.PutUint16(msgCodeByteArray, uint16(code))
+	binary.BigEndian.PutUint16(msgCodeByteArray, uint16(code))
 
 	// encode the body of the message
 	msgBodyByteArray, err := proto.Marshal(obj)
