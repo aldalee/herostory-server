@@ -48,7 +48,7 @@ func consume(q <-chan func()) {
 // Process dispatches asyncOp to the goroutine selected by bindID.
 // If continueWith is non-nil, it will be scheduled on the main thread
 // after asyncOp completes.
-func (p *WorkerPool) Process(bindID int, asyncOp func(), continueWith func()) {
+func (p *WorkerPool) Process(bindID int, asyncOp, continueWith func()) {
 	if asyncOp == nil {
 		return
 	}
@@ -63,11 +63,10 @@ func (p *WorkerPool) Process(bindID int, asyncOp func(), continueWith func()) {
 	}
 }
 
-
 var defaultPool = NewWorkerPool(defaultPoolSize)
 
 // Process dispatches asyncOp via the default global WorkerPool.
-func Process(bindID int, asyncOp func(), continueWith func()) {
+func Process(bindID int, asyncOp, continueWith func()) {
 	defaultPool.Process(bindID, asyncOp, continueWith)
 }
 
