@@ -11,10 +11,6 @@ import (
 
 // DecodeMessage decode byte array by message code
 func DecodeMessage(data []byte, code int16) (*dynamicpb.Message, error) {
-	if len(data) == 0 {
-		return nil, ErrEmptyData
-	}
-
 	desc, err := getMsgDescByMsgCode(code)
 	if err != nil {
 		return nil, err
