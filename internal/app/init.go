@@ -1,4 +1,4 @@
-package bootstrap
+package app
 
 import (
 	"os"
@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitApp() {
+func Init() {
 	logger.InitZeroLogger("./storage/logs", "biz_server")
 	codec.InitMaps()
 
